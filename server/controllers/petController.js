@@ -4,7 +4,7 @@ const petController = {};
 petController.getPet = (req, res, next) => {
   // write code here
   //use client in here -> might be using query here ?
-  db.query('SELECT * FROM public.animals', (err, result) => {
+  db.query('SELECT * FROM public.animals;', (err, result)=>{
     if (err) {
       console.log(err);
     } else {
