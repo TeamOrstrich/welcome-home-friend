@@ -14,7 +14,6 @@ postController.getPosts = async (req, res, next) => {
                            ORDER BY p.timestamp`;
 
     const result = await db.query(getPostsQuery);
-    // console.log(result.rows);
     // locals.postsArr should be an arr of objs
     res.locals.postsArr = result.rows;
     return next();
