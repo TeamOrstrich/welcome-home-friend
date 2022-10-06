@@ -1,10 +1,10 @@
-const db = require('../models/models.js');
+const db = require("../models/models.js");
 
 const userController = {};
 
 //create user
 userController.createUser = async (req, res, next) => {
-  console.log('IN CREATEUSER');
+  console.log("IN CREATEUSER");
   const { name, username, password } = req.body;
   const param = [name, username, password];
 
@@ -15,17 +15,20 @@ userController.createUser = async (req, res, next) => {
       username,
       password
     )
-    VALUES($1, $2, $3);`;
+    VALUES($1, $2, $3)
+    RETURNING _id;`;
 
     const result = await db.query(newUserQuery, param);
-
+    // console.log("result:", result);
+    // save user_id in res.locals obj to access in cookie middleware
+    res.locals.user_id = result;
     // send back user data from db to frontend
-    res.locals.status = { success: true, message: 'Account created' };
+    res.locals.status = { success: true, message: "Account created" };
 
     return next();
   } catch (error) {
     return next({
-      log: 'Express error in createUser middleware',
+      log: "Express error in createUser middleware",
       status: 400,
       message: {
         err: `userController.createUser: ERROR: ${error}`,
@@ -36,7 +39,7 @@ userController.createUser = async (req, res, next) => {
 
 // Sign up route: check if user already exists in database
 userController.verifyUser = async (req, res, next) => {
-  console.log('IN VERIFYUSER');
+  console.log("IN VERIFYUSER");
   const { username } = req.body;
   console.log(req.body);
   const param = [username];
@@ -59,7 +62,7 @@ userController.verifyUser = async (req, res, next) => {
     }
   } catch (error) {
     return next({
-      log: 'Express error in verifyUser middleware',
+      log: "Express error in verifyUser middleware",
       status: 400,
       message: {
         err: `userController.verifyUser: ERROR: ${error}`,
@@ -70,7 +73,7 @@ userController.verifyUser = async (req, res, next) => {
 
 //log in
 userController.loginUser = async (req, res, next) => {
-  console.log('IN LOGIN USER');
+  console.log("IN LOGIN USER");
   const { username, password } = req.body;
 
   const param = [username, password];
@@ -81,17 +84,24 @@ userController.loginUser = async (req, res, next) => {
 
     // check to see if the password obtained from database is same as the one sent in req.body
     if (data.rows.length > 0) {
-      res.locals.status = { success: true, message: 'Successful Login', userId: data.rows[0]};
+      // save user_id in res.locals obj to access in cookie middleware
+      console.log("data.rows[0]._id:", data.rows[0]._id);
+      res.locals.user_id = data.rows[0]._id;
+      res.locals.status = {
+        success: true,
+        message: "Successful Login",
+        userId: data.rows[0],
+      };
       return next();
     }
     res.locals.status = {
       success: false,
-      message: 'Invalid username or password',
+      message: "Invalid username or password",
     };
     return next();
   } catch (error) {
     return next({
-      log: 'Express error in userController.loginUser middleware',
+      log: "Express error in userController.loginUser middleware",
       status: 400,
       message: {
         err: `userController.loginUser: ERROR: ${error}`,
@@ -99,6 +109,5 @@ userController.loginUser = async (req, res, next) => {
     });
   }
 };
-
 
 module.exports = userController;
