@@ -15,6 +15,17 @@ cookieController.setUsernameCookie = (req, res, next) => {
   next();
 };
 
+
+//sets the cookie equal to the user_id
+cookieController.setGoogleOAuthCookie = (req, res, next) => {
+
+  res.cookie('user_id', 48, {
+    maxAge: 900000,
+    httpOnly: true,
+  });
+  next();
+};
+
 //deletes the cookie if the user logs out
 cookieController.deleteCookie = (req, res, next) => {
   res.clearCookie('user_id');

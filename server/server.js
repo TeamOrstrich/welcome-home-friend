@@ -2,6 +2,22 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const PORT = 3000;
+// Google OAuth Imports
+require("./oAuth/googleSetup");
+const passport = require("passport");
+const cookieSession = require("cookie-session");
+
+const cookieController = require("./controllers/cookieController.js");
+
+app.use(
+  cookieSession({
+    name: "google-auth-session",
+    keys: ["key1", "key2"],
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -26,6 +42,7 @@ exports.upload = upload;
 // const apiRouter = require('./routes/api');
 const userRouter = require("./routes/userRouter");
 const postRouter = require("./routes/postRouter");
+// const googleOauthRouter = require("./routes/googleOauthRouter");
 
 // handle parsing request body
 app.use(cookieParser());
@@ -40,6 +57,34 @@ app.use("/user", userRouter);
 app.use("/post", postRouter);
 // route for serving static html
 app.use(express.static(path.join(__dirname, "../build")));
+
+// app.use("/google", googleOauthRouter);
+// Google OAuth routes
+app.get("/failed", (req, res) => {
+  res.send("Failed");
+});
+
+app.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile"],
+  })
+);
+
+app.get(
+  "/google/callback",
+  // passport.authenticate("google", {
+  //   failureRedirect: "user/login",
+  // }),
+  (req, res, next) => {
+    // hard code user's id
+    return next();
+  },
+  cookieController.setGoogleOAuthCookie,
+  function (req, res) {
+    res.redirect("/");
+  }
+);
 
 // catch-all route handler for any requests to an unknown route
 app.use((req, res) =>

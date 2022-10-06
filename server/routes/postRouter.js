@@ -10,7 +10,7 @@ router.get("/", postController.getPosts, (req, res) =>
 
 router.post(
   "/create",
-  upload.single('imgFile'),
+  upload.single("imgFile"),
   postController.addPost,
   (req, res) => res.status(200).json(res.locals.post)
 );

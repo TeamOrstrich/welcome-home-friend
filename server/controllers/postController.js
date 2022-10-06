@@ -8,7 +8,7 @@ postController.getPosts = async (req, res, next) => {
                             a._id, a.name, a.eye_color, a.gender, a.color, a.last_seen, a.images,
                             u.username, c.user_id, c.text, c.timestamp
                            FROM public.post AS p
-                           INNER JOIN public.comment AS c ON p._id = c.post_id
+                           OUTER JOIN public.comment AS c ON p._id = c.post_id
                            INNER JOIN public.animals AS a ON p.pet_id = a._id
                            INNER JOIN public.user AS u ON p.user_id = u._id
                            ORDER BY p.timestamp`;
