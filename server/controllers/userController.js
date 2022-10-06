@@ -1,12 +1,14 @@
 const db = require("../models/models.js");
-
+const bcrypt = require('bcrypt');
 const userController = {};
 
 //create user
 userController.createUser = async (req, res, next) => {
   console.log("IN CREATEUSER");
-  const { name, username, password } = req.body;
-  const param = [name, username, password];
+  let { name, username, password } = req.body;
+  console.log(`Name: ${name}, Username: ${username}, Password: ${password}`);
+  const encryptedPassword = bcrypt.hashSync(password, 10);
+  const param = [name, username, encryptedPassword];
 
   try {
     //push the data into DB
@@ -27,6 +29,7 @@ userController.createUser = async (req, res, next) => {
 
     return next();
   } catch (error) {
+    console.log(error);
     return next({
       log: "Express error in createUser middleware",
       status: 400,
@@ -71,16 +74,16 @@ userController.verifyUser = async (req, res, next) => {
 //log in
 userController.loginUser = async (req, res, next) => {
   console.log("IN LOGIN USER");
-  const { username, password } = req.body;
-
-  const param = [username, password];
+  let { username, password } = req.body;
+  const param = [username];
 
   try {
-    const newNameQuery = `SELECT * FROM public.user WHERE username=$1 AND password=$2;`;
+    const newNameQuery = `SELECT * FROM public.user WHERE username=$1;`;
     const data = await db.query(newNameQuery, param);
 
     // check to see if the password obtained from database is same as the one sent in req.body
-    if (data.rows.length > 0) {
+    // compare the password with encrypted password in db
+    if (data.rows.length > 0 && bcrypt.compareSync(password, data.rows[0].password)) {
       // save user_id in res.locals obj to access in cookie middleware
       console.log("data.rows[0]._id:", data.rows[0]._id);
       res.locals.user_id = data.rows[0]._id;
