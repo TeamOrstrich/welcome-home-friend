@@ -14,7 +14,7 @@ postController.getPosts = async (req, res, next) => {
                            ORDER BY p.timestamp`;
 
     const result = await db.query(getPostsQuery);
-    console.log(result.rows);
+    // console.log(result.rows);
     // locals.postsArr should be an arr of objs
     res.locals.postsArr = result.rows;
     return next();
@@ -33,7 +33,7 @@ postController.getOnePost = async (req, res, next) => {
   // find post for response to frontend
   try {
     const param = [res.locals.post_id];
-    console.log(param);
+    // console.log(param);
     const getPostQuery = `SELECT p.timestamp, p.description, p._id, 
                             a._id, a.name, a.eye_color, a.gender, a.color, a.last_seen, a.images,
                             u.username, c.user_id, c.text, c.timestamp
@@ -43,7 +43,7 @@ postController.getOnePost = async (req, res, next) => {
                           INNER JOIN public.comment AS c ON u._id = c.user_id
                           WHERE c.post_id=$1`;
     const newPostData = await db.query(getPostQuery, param);
-    console.log(newPostData.rows[0]);
+    // console.log(newPos tData.rows[0]);
     res.locals.newPost = newPostData.rows[0];
     return next();
   } catch (error) {
@@ -61,7 +61,12 @@ postController.addPost = async (req, res, next) => {
   // get userId from frontend (need to send userid in response from createUser and loginUser)
   const { name, user_id, eye_color, gender, color, last_seen, description } =
     req.body;
-  const param = [name, user_id, eye_color, gender, color, last_seen];
+  // console.log("File name: ", req.file.dest);
+  // console.log("Request File: ", req.file);
+  const { path } = req.file;
+  // console.log("req.file.imgFile:", req.file.imgFile);
+  // console.log("imgFile:", imgFile);
+  const param = [name, user_id, eye_color, gender, color, last_seen, path];
   let petData;
   // add pet
   try {
@@ -71,10 +76,11 @@ postController.addPost = async (req, res, next) => {
       eye_color,
       gender,
       color,
-      last_seen
-    )VALUES( $1, $2, $3, $4, $5, $6) RETURNING *`;
+      last_seen,
+      images
+    )VALUES( $1, $2, $3, $4, $5, $6, $7) RETURNING *`;
     petData = await db.query(addPetQuery, param);
-    console.log("Added pet: ", petData);
+    // console.log("Added pet: ", petData);
   } catch (error) {
     return next({
       log: "Express error in addPost -addPet- middleware",
@@ -87,15 +93,15 @@ postController.addPost = async (req, res, next) => {
   // add post
   try {
     const param2 = [user_id, petData.rows[0]._id, description];
-    console.log("Param2: ", param2);
+    // console.log("Param2: ", param2);
     const addPostQuery = `INSERT INTO public.post(
-      pet_id,
       user_id,
+      pet_id,
       description
     )VALUES($1, $2, $3) RETURNING description`;
 
     const addPostResult = await db.query(addPostQuery, param2);
-    console.log("Adding Post");
+    // console.log("Adding Post");
     // save response in res.locals
     let pet = petData.rows[0];
     console.log(pet);
@@ -121,8 +127,8 @@ postController.addPost = async (req, res, next) => {
 
 postController.deletePost = async (req, res, next) => {
   const { post_id, pet_id } = res.locals.post;
-  console.log("Post ID:", post_id);
-  console.log("Pet ID:", pet_id);
+  // console.log("Post ID:", post_id);
+  // console.log("Pet ID:", pet_id);
   try {
     // delete post
     const param = [post_id];

@@ -2,6 +2,40 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const PORT = 3000;
+
+const multer = require("multer");
+
+//! Use of Multer
+const storage = multer.diskStorage({
+  destination: function(req, file, callback) {
+    callback(null, path.join(__dirname, '/imgs/'));
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.fieldname);
+  }
+});
+const upload = multer({
+  // dest: 'imgs/'
+  storage: storage
+});
+exports.upload = upload;
+// const imageStorage = multer.diskStorage({
+//   // Destination to store image     
+//   destination: './imgs', 
+//     filename: (req, file, cb) => {
+//         cb(null, file.fieldname + '_' + Date.now() 
+//            + path.extname(file.originalname))
+//           // file.fieldname is name of the field (image)
+//           // path.extname get the uploaded file extension
+//   }
+// });
+
+// const upload = multer({ dest: "./imgs/" }).single('');
+
+
+// const storage = multer.diskStorage({
+//   destination: function (req, file, )
+// })
 // const cors = require('cors')  npm i cors later when dealing w cookies
 // const cookieParser = require('cookie-parser')
 
@@ -40,4 +74,5 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost${PORT}...`);
 });
+
 module.exports = app;

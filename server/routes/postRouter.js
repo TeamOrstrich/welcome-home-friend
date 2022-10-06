@@ -1,14 +1,18 @@
 const express = require("express");
 const postController = require("../controllers/postController");
-
+const { app, upload } = require("../server");
+// console.log('App:', upload)
 const router = express.Router();
 
 router.get("/", postController.getPosts, (req, res) =>
   res.status(200).json(res.locals.postsArr)
 );
 
-router.post("/create", postController.addPost, (req, res) =>
-  res.status(200).json(res.locals.post)
+router.post(
+  "/create",
+  upload.single('imgFile'),
+  postController.addPost,
+  (req, res) => res.status(200).json(res.locals.post)
 );
 
 router.delete(
