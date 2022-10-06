@@ -61,13 +61,8 @@ postController.addPost = async (req, res, next) => {
   // get userId from frontend (need to send userid in response from createUser and loginUser)
   const { name, user_id, eye_color, gender, color, last_seen, description } =
     req.body;
-<<<<<<< HEAD
-  const param = [name, user_id, eye_color, gender, color, last_seen];
-  console.log(param);
-=======
   const { path } = req.file;
   const param = [name, user_id, eye_color, gender, color, last_seen, path];
->>>>>>> dev
   let petData;
   // add pet
   try {
@@ -81,11 +76,7 @@ postController.addPost = async (req, res, next) => {
       images
     )VALUES( $1, $2, $3, $4, $5, $6, $7) RETURNING *`;
     petData = await db.query(addPetQuery, param);
-<<<<<<< HEAD
-    console.log('Added pet: ', petData);
-=======
     // console.log("Added pet: ", petData);
->>>>>>> dev
   } catch (error) {
     console.log(error);
     return next({
@@ -99,10 +90,6 @@ postController.addPost = async (req, res, next) => {
   // add post
   try {
     const param2 = [user_id, petData.rows[0]._id, description];
-<<<<<<< HEAD
-    console.log('Param2: ', param2);
-=======
->>>>>>> dev
     const addPostQuery = `INSERT INTO public.post(
       user_id,
       pet_id,
@@ -110,10 +97,6 @@ postController.addPost = async (req, res, next) => {
     )VALUES($1, $2, $3) RETURNING description`;
 
     const addPostResult = await db.query(addPostQuery, param2);
-<<<<<<< HEAD
-    console.log('Adding Post');
-=======
->>>>>>> dev
     // save response in res.locals
     let pet = petData.rows[0];
     console.log(pet);
@@ -139,11 +122,6 @@ postController.addPost = async (req, res, next) => {
 
 postController.deletePost = async (req, res, next) => {
   const { post_id, pet_id } = res.locals.post;
-<<<<<<< HEAD
-  console.log('Post ID:', post_id);
-  console.log('Pet ID:', pet_id);
-=======
->>>>>>> dev
   try {
     // delete post
     const param = [post_id];

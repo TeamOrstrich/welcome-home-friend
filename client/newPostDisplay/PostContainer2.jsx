@@ -1,5 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
+import PostItem from './PostItem.jsx';
 //name, user_id, eye_color, gender, color, last_seen, description
 
 export default function PostContainer2() {
@@ -7,10 +8,19 @@ export default function PostContainer2() {
   const [data, setData] = React.useState([]);
 
   useEffect(() => {
-    console.log("hello")
+    console.log('hello');
     fetch('/post/')
       .then((response) => response.json())
-      .then((response) => console.log(response));
-  });
-  return <div>PostContainer2</div>;
+      .then((response) => setData(response));
+  }, []);
+
+  console.log('logging data');
+  console.log(data);
+  return (
+    <div id='posts'>
+      {data.map((postData) => (
+        <PostItem postData={postData} />
+      ))}
+    </div>
+  );
 }
