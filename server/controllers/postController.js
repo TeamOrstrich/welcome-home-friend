@@ -10,13 +10,14 @@ postController.getPosts = async (req, res, next) => {
                             u.username, c.user_id, c.text, c.timestamp
                            FROM public.post AS p
                            FULL OUTER JOIN public.comment AS c ON p._id = c.post_id
-                           INNER JOIN public.animals AS a ON p.pet_id = a._id
-                           INNER JOIN public.user AS u ON p.user_id = u._id
+                           FULL OUTER JOIN public.animals AS a ON p.pet_id = a._id
+                           FULL OUTER JOIN public.user AS u ON p.user_id = u._id
                            ORDER BY p.timestamp`;
 
     const result = await db.query(getPostsQuery);
     // locals.postsArr should be an arr of objs
     res.locals.postsArr = result.rows;
+    console.log(`Length of posts: ${result.rows.length}`)
     return next();
   } catch (error) {
     return next({

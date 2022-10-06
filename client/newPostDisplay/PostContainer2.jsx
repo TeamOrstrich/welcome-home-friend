@@ -18,9 +18,11 @@ export default function PostContainer2() {
   console.log(data);
   return (
     <div id='posts'>
-      {data.map((postData) => (
-        <PostItem postData={postData} />
-      ))}
+      {data.map((postData, index) =>
+        (
+        <PostItem key={index} postData={postData} />
+      )
+      )}
     </div>
   );
 }
