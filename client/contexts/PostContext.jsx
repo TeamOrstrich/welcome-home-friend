@@ -39,6 +39,7 @@ const defualtPetData = [
 export function PetDataProvider({children}) {
   const [petData, setPetData] = useState(defualtPetData);
 
+  
   function addPetData(newPetObj) {
     setPetData(oldState => {
       if (newPetObj.hasOwnProperty('DELETEID')) {

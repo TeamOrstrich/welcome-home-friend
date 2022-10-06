@@ -1,14 +1,15 @@
-const db = require("../models/models");
+const db = require('../models/models');
 const postController = {};
 
 postController.getPosts = async (req, res, next) => {
+  console.log("inside getPosts");
   try {
     // query str
     const getPostsQuery = `SELECT p.timestamp, p.description, p._id, 
                             a._id, a.name, a.eye_color, a.gender, a.color, a.last_seen, a.images,
                             u.username, c.user_id, c.text, c.timestamp
                            FROM public.post AS p
-                           INNER JOIN public.comment AS c ON p._id = c.post_id
+                           FULL OUTER JOIN public.comment AS c ON p._id = c.post_id
                            INNER JOIN public.animals AS a ON p.pet_id = a._id
                            INNER JOIN public.user AS u ON p.user_id = u._id
                            ORDER BY p.timestamp`;
@@ -20,7 +21,7 @@ postController.getPosts = async (req, res, next) => {
     return next();
   } catch (error) {
     return next({
-      log: "Express error in getPosts middleware",
+      log: 'Express error in getPosts middleware',
       status: 400,
       message: {
         err: `userController.getPosts: ERROR: ${error}`,
@@ -48,7 +49,7 @@ postController.getOnePost = async (req, res, next) => {
     return next();
   } catch (error) {
     return next({
-      log: "Express error in getOnePost middleware",
+      log: 'Express error in getOnePost middleware',
       status: 400,
       message: {
         err: `postController.getOnePost: ERROR: ${error}`,
@@ -62,22 +63,24 @@ postController.addPost = async (req, res, next) => {
   const { name, user_id, eye_color, gender, color, last_seen, description } =
     req.body;
   const param = [name, user_id, eye_color, gender, color, last_seen];
+  console.log(param);
   let petData;
   // add pet
   try {
     const addPetQuery = `INSERT INTO public.animals(
       name,
-      user_id,
+      user_id, 
       eye_color,
       gender,
       color,
       last_seen
     )VALUES( $1, $2, $3, $4, $5, $6) RETURNING *`;
     petData = await db.query(addPetQuery, param);
-    console.log("Added pet: ", petData);
+    console.log('Added pet: ', petData);
   } catch (error) {
+    console.log(error);
     return next({
-      log: "Express error in addPost -addPet- middleware",
+      log: 'Express error in addPost -addPet- middleware',
       status: 400,
       message: {
         err: `petController.addPost: ERROR: ${error}`,
@@ -87,15 +90,15 @@ postController.addPost = async (req, res, next) => {
   // add post
   try {
     const param2 = [user_id, petData.rows[0]._id, description];
-    console.log("Param2: ", param2);
+    console.log('Param2: ', param2);
     const addPostQuery = `INSERT INTO public.post(
-      pet_id,
       user_id,
+      pet_id,
       description
     )VALUES($1, $2, $3) RETURNING description`;
 
     const addPostResult = await db.query(addPostQuery, param2);
-    console.log("Adding Post");
+    console.log('Adding Post');
     // save response in res.locals
     let pet = petData.rows[0];
     console.log(pet);
@@ -110,7 +113,7 @@ postController.addPost = async (req, res, next) => {
     return next();
   } catch (error) {
     return next({
-      log: "Express error in addPost -addPost- middleware",
+      log: 'Express error in addPost -addPost- middleware',
       status: 400,
       message: {
         err: `petController.addPost: ERROR: ${error}`,
@@ -121,8 +124,8 @@ postController.addPost = async (req, res, next) => {
 
 postController.deletePost = async (req, res, next) => {
   const { post_id, pet_id } = res.locals.post;
-  console.log("Post ID:", post_id);
-  console.log("Pet ID:", pet_id);
+  console.log('Post ID:', post_id);
+  console.log('Pet ID:', pet_id);
   try {
     // delete post
     const param = [post_id];
@@ -130,7 +133,7 @@ postController.deletePost = async (req, res, next) => {
     const deletePostResult = await db.query(deletePostQuery, param);
   } catch (error) {
     return next({
-      log: "Express error in deletePost -deletePost- middleware",
+      log: 'Express error in deletePost -deletePost- middleware',
       status: 400,
       message: {
         err: `petController.deletePost: ERROR: ${error}`,
@@ -143,11 +146,11 @@ postController.deletePost = async (req, res, next) => {
     const deletePetQuery = `DELETE FROM public.animals WHERE _id = $1`;
     const deletePetResult = await db.query(deletePetQuery, param2);
 
-    res.locals.status = { success: true, message: "Post deleted" };
+    res.locals.status = { success: true, message: 'Post deleted' };
     return next();
   } catch (error) {
     return next({
-      log: "Express error in deletePost -deletePet- middleware",
+      log: 'Express error in deletePost -deletePet- middleware',
       status: 400,
       message: {
         err: `petController.deletePost: ERROR: ${error}`,
@@ -173,7 +176,7 @@ postController.deleteComment = async (req, res, next) => {
     return next();
   } catch (error) {
     return next({
-      log: "Express error in deleteComment middleware",
+      log: 'Express error in deleteComment middleware',
       status: 400,
       message: {
         err: `userController.deleteComment: ERROR: ${error}`,
@@ -198,7 +201,7 @@ postController.deleteAllComments = async (req, res, next) => {
     return next();
   } catch (error) {
     return next({
-      log: "Express error in deleteComment middleware",
+      log: 'Express error in deleteComment middleware',
       status: 400,
       message: {
         err: `userController.deleteComment: ERROR: ${error}`,
@@ -223,7 +226,7 @@ postController.addComment = async (req, res, next) => {
     return next();
   } catch (error) {
     return next({
-      log: "Express error in deleteComment middleware",
+      log: 'Express error in deleteComment middleware',
       status: 400,
       message: {
         err: `userController.deleteComment: ERROR: ${error}`,

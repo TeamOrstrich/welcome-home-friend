@@ -13,7 +13,6 @@ const Post = ( {petObj} ) => {
   function loadImg(url) {
     if (url) return <img className="lost-pet-pic" src={petObj.image_url}></img>
   }
-
   return (
     <div className="post">
       <div className="petPic">
