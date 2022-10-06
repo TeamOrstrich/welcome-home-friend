@@ -14,7 +14,6 @@ postController.getPosts = async (req, res, next) => {
                            ORDER BY p.timestamp`;
 
     const result = await db.query(getPostsQuery);
-    // console.log(result.rows);
     // locals.postsArr should be an arr of objs
     res.locals.postsArr = result.rows;
     return next();
@@ -61,11 +60,7 @@ postController.addPost = async (req, res, next) => {
   // get userId from frontend (need to send userid in response from createUser and loginUser)
   const { name, user_id, eye_color, gender, color, last_seen, description } =
     req.body;
-  // console.log("File name: ", req.file.dest);
-  // console.log("Request File: ", req.file);
   const { path } = req.file;
-  // console.log("req.file.imgFile:", req.file.imgFile);
-  // console.log("imgFile:", imgFile);
   const param = [name, user_id, eye_color, gender, color, last_seen, path];
   let petData;
   // add pet
@@ -93,7 +88,6 @@ postController.addPost = async (req, res, next) => {
   // add post
   try {
     const param2 = [user_id, petData.rows[0]._id, description];
-    // console.log("Param2: ", param2);
     const addPostQuery = `INSERT INTO public.post(
       user_id,
       pet_id,
@@ -101,7 +95,6 @@ postController.addPost = async (req, res, next) => {
     )VALUES($1, $2, $3) RETURNING description`;
 
     const addPostResult = await db.query(addPostQuery, param2);
-    // console.log("Adding Post");
     // save response in res.locals
     let pet = petData.rows[0];
     console.log(pet);
@@ -127,8 +120,6 @@ postController.addPost = async (req, res, next) => {
 
 postController.deletePost = async (req, res, next) => {
   const { post_id, pet_id } = res.locals.post;
-  // console.log("Post ID:", post_id);
-  // console.log("Pet ID:", pet_id);
   try {
     // delete post
     const param = [post_id];

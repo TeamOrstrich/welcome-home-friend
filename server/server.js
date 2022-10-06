@@ -3,48 +3,35 @@ const express = require("express");
 const app = express();
 const PORT = 3000;
 
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
 const multer = require("multer");
 
 //! Use of Multer
 const storage = multer.diskStorage({
-  destination: function(req, file, callback) {
-    callback(null, path.join(__dirname, '/imgs/'));
+  destination: function (req, file, callback) {
+    callback(null, path.join(__dirname, "/imgs/"));
   },
   filename: function (req, file, callback) {
     callback(null, file.fieldname);
-  }
+  },
 });
 const upload = multer({
   // dest: 'imgs/'
-  storage: storage
+  storage: storage,
 });
 exports.upload = upload;
-// const imageStorage = multer.diskStorage({
-//   // Destination to store image     
-//   destination: './imgs', 
-//     filename: (req, file, cb) => {
-//         cb(null, file.fieldname + '_' + Date.now() 
-//            + path.extname(file.originalname))
-//           // file.fieldname is name of the field (image)
-//           // path.extname get the uploaded file extension
-//   }
-// });
-
-// const upload = multer({ dest: "./imgs/" }).single('');
-
-
-// const storage = multer.diskStorage({
-//   destination: function (req, file, )
-// })
-// const cors = require('cors')  npm i cors later when dealing w cookies
-// const cookieParser = require('cookie-parser')
 
 // const apiRouter = require('./routes/api');
 const userRouter = require("./routes/userRouter");
 const postRouter = require("./routes/postRouter");
 
-/*handle parsing request body*/
+// handle parsing request body
+app.use(cookieParser());
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 //  app.use(express.urlencoded({ extended: true }));
 
 /*define route handlers*/
