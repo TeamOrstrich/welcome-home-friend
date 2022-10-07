@@ -18,6 +18,7 @@ export default function PostContainer2() {
   console.log(data);
   return (
     <div id='posts'>
+      <h1>Bulletin Board</h1>
       {data.map((postData, index) =>
         (
         <PostItem key={index} postData={postData} />

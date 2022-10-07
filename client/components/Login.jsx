@@ -40,8 +40,8 @@ export default function Login() {
         <button type='submit' className='btn' onClick={verfiyUser} >
           Login
         </button>
-        <a className='forgot' >
-          Forgot Username?
+        <a href="/google">
+          Sign in with Google
         </a>
 
     </div>

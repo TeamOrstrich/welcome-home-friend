@@ -208,3 +208,11 @@ body {
 #modal-modal-description {
   background-color: #ffbe7bff;
 }
+
+.post-item {
+  background-color: #f3ecc0;
+  padding: 20px;
+  /* border: 1px solid black; */
+  margin: 10px;
+  box-shadow: 0px 0px 10px 0px rgba(122,95,49,1);;
+}

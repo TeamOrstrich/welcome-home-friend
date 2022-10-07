@@ -8,6 +8,8 @@ import Button from '@mui/material/Button';
 
 const CreatePost = () => {
   const addPetData = usePetUpdateContext();
+
+  const [imgFile, setImgFile] = React.useState()
   // const petDetails = usePetContext()
   // _id (req), pet_name (req), owner, address, eye_color, gender, image_url, fur_color, last_found, comments
 
@@ -119,6 +121,7 @@ const CreatePost = () => {
         {/* {inputDiv('Pet Photo URL:', 'image_url')} */}
         {textAreaDiv('Last Seen', 'last_seen')}
         {textAreaDiv('Description:', 'description')}
+        {/* <input type="file" label='image' onChange={(e) => setImgFile(e.target.files)}/>; */}
       </div>
 
       <div className='create-post-submit'>
@@ -137,7 +140,7 @@ const CreatePost = () => {
           onClick={() => {
             // addPetData(petData())
             // fetch(postURL).then(whtvr).catch(handleerr)
-
+            console.log(petData());
             fetch('/post/create', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },

@@ -10,8 +10,8 @@ postController.getPosts = async (req, res, next) => {
                             u.username, c.user_id, c.text, c.timestamp
                            FROM public.post AS p
                            FULL OUTER JOIN public.comment AS c ON p._id = c.post_id
-                           FULL OUTER JOIN public.animals AS a ON p.pet_id = a._id
-                           FULL OUTER JOIN public.user AS u ON p.user_id = u._id
+                           INNER JOIN public.animals AS a ON p.pet_id = a._id
+                           INNER JOIN public.user AS u ON p.user_id = u._id
                            ORDER BY p.timestamp`;
 
     const result = await db.query(getPostsQuery);
@@ -62,8 +62,7 @@ postController.addPost = async (req, res, next) => {
   // get userId from frontend (need to send userid in response from createUser and loginUser)
   const { name, user_id, eye_color, gender, color, last_seen, description } =
     req.body;
-  const { path } = req.file;
-  const param = [name, user_id, eye_color, gender, color, last_seen, path];
+  const param = [name, user_id, eye_color, gender, color, last_seen];
   let petData;
   // add pet
   try {
@@ -73,9 +72,8 @@ postController.addPost = async (req, res, next) => {
       eye_color,
       gender,
       color,
-      last_seen,
-      images
-    )VALUES( $1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+      last_seen
+    )VALUES( $1, $2, $3, $4, $5, $6 ) RETURNING *`;
     petData = await db.query(addPetQuery, param);
     // console.log("Added pet: ", petData);
   } catch (error) {

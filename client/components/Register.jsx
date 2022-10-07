@@ -54,7 +54,7 @@ export default function Register() {
       />
 
       <button type="submit" className="btn" onClick={createAUser}>
-        Login
+        Register
       </button>
     </div>
   );
